@@ -1,4 +1,6 @@
 '''
+Rosenbrock函数：是一个用来测试最优化算法性能的非凸函数，由Howard Harry Rosenbrock在1960年提。
+也称为Rosenbrock山谷或Rosenbrock香蕉函数，也简称为香蕉函数
 A simply implementation of  SGD for the classic function :
 f(x,y)=(1-x)2+100(y-x2)2
 f(1,1) = 0
