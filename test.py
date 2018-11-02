@@ -31,7 +31,7 @@ def for_rosenbrock_func(max_iter_count=100000, step_size=0.001):
         loss = cal_rosenbrock(pre_x[0], pre_x[1])
         # 最小值为0 print("iter_count: ", iter_count, "the loss:", loss) 
         iter_count += 1
-        return pre_x 
+    return pre_x 
 if __name__ == '__main__': 
     w = for_rosenbrock_func()
     print(w)
