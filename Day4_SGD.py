@@ -1,6 +1,7 @@
 '''
 A simply implementation of  SGD for the classic function :
 f(x,y)=(1-x)2+100(y-x2)2
+f(1,1) = 0
 '''
 from math import *
 class SGD:
@@ -13,7 +14,7 @@ class SGD:
     def get_xy(self):
         return self.x,self.y
     def partial_reci_x(self):
-        self.deta_x= -2*(1-self.x)-200*(self.y-self.x*self.x)*(-2*self.x)
+        self.deta_x= -2*(1-self.x)-200*(self.y-self.x*self.x)*(2*self.x)
         return self.deta_x
     def partial_reci_y(self):
         self.deta_y= 200*(self.y-self.x*self.x)
