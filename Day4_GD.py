@@ -1,12 +1,13 @@
+#-*- coding: utf-8 -*-
 '''
 Rosenbrock函数：是一个用来测试最优化算法性能的非凸函数，由Howard Harry Rosenbrock在1960年提。
 也称为Rosenbrock山谷或Rosenbrock香蕉函数，也简称为香蕉函数
-A simply implementation of  SGD for the classic function :
+A simply implementation of  GD for the classic function :
 f(x,y)=(1-x)2+100(y-x2)2
 f(1,1) = 0
 '''
 from math import *
-class SGD:
+class GD:
     def __init__(self,x,y,lr):
         self.lr = lr
         self.x = x
@@ -33,20 +34,19 @@ class SGD:
         return abs(self.obj_fun())
 if __name__ == '__main__':
     iter = 0
-    lr = 0.0001
-    sp_sgd = SGD(0,0,lr)
-    while(sp_sgd.cal_loss()>0.001 and iter < 10000):
+    lr = 0.001
+    sp_gd = GD(0,0,lr)
+    while(sp_gd.cal_loss()>0.0001 and iter < 10000):
         iter += 1
-        print iter
-        print sp_sgd.partial_reci_x()
-        print sp_sgd.partial_reci_y()
-        sp_sgd.update()
-        print sp_sgd.get_xy()
-        print sp_sgd.cal_loss()
-        #if iter/100.0 == 0.0:
-            #print iter,sp_sgd.cal_loss()
-    print sp_sgd.cal_loss()
+        sp_gd.partial_reci_x()
+        sp_gd.partial_reci_y()
+        sp_gd.update()
+        #print sp_gd.get_xy()
+        #print sp_gd.cal_loss()
+        if iter/100.0 == 0.0:
+            print iter,sp_gd.cal_loss()
+    print sp_gd.cal_loss()
         
-    x,y = sp_sgd.get_xy()
+    x,y = sp_gd.get_xy()
     print x,y
 
