@@ -27,6 +27,8 @@ class ConvLayer(object):
       ret[self.padding_size:org_h+self.padding_size,self.padding_size:org_w+self.padding_size] = input_data
       return ret
   def forward(self,batch_size,input_data):
-        
+      ret = np.zeros((batch_size,))
+      for i in range(batch_size):
+          
         
       
