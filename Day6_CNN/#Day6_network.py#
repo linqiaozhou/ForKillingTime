@@ -4,7 +4,7 @@ import numpy as np
 class NetWork(object):
     def __init__(self,laye_sizes):
         self.layer_nums = len(layer_sizes)
-        #每一层的神经元的个数，如[1,2,3]
+        #每一层的神经元的个数，如[3,2,1]
         self.layer_sizes = layer_sizes
         self.bias = [np.random.randn(y,1) for y in layer_sizes[1:]]
         self.weights = [np.random.randn(y,x) \
