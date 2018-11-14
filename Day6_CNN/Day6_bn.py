@@ -1,6 +1,6 @@
 #coding=uft-8
 import numpy as np
-import random
+
 class BatchNormal(object):
     def __init__(self,input_data):
         batch_size,channel,img_h,img_w=input_data.shape
