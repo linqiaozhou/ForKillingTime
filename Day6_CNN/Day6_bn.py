@@ -10,6 +10,8 @@ class BatchNormal(object):
         self.variance = np.zeros(channel,dtype=float32)
         self.gammma = np.random.randn(channel,dtype=float32)
         self.beta=np.random.randn(channel,dtype=float32)
+        self.deta_gama=np.zeros(channel,dtype=float32)
+        self.deta_beta=np.zeros(channel,dtype=float32)
     def forward(self,input_data):
         batch_size,channel,img_h,img_w=input_data.shape
         output_data = np.zeros_like(input_data,dtype=float32)
@@ -18,13 +20,13 @@ class BatchNormal(object):
                 for h in range(img_h):
                     for w in range(img_w):
                         self.mean[c] += input_data[b,c,h,w]
-        self.mean/=input_data.size
+        self.mean/=(batch_size*channel*img_h*img_w)
         for b in range(batch_size):
             for c in range(channel):
                 for h in range(img_h):
                     for w in range(img_w):
                         self.variance[c] += (input_data[b,c,h,w]-self.mean[c])**2
-        self.variance /= input_data.size
+        self.variance /= (batch_size*channel*img_h*img_w)
         for b in range(batch_size):
             for c in range(channel):
                 for h in range(img_h):
@@ -33,5 +35,19 @@ class BatchNormal(object):
                         output_data[b,c,h,w]= self.norm[b,c,h,w]*self.gamma[c]+self.beta[c]
         return output_data
         
-        def backward(self,residual):
-            
+    def backward(self,residual):
+        batch_size,channel,img_h,img_w=residual.shape
+        for b in range(batch_size):
+            for c in range(channel):
+                for h in range(img_h):
+                    for w in range(img_w):
+                        self.deta_gamma[c] += residual[b,c,h,w]*self.norm[b,c,h,w]
+                        self.deta_beta[c] += residual[b,c,h,w]
+        deta_norma_x = np.zeros_like(residual,dtype=float32)
+        for b in range(batch_size):
+            for c in range(channel):
+                for h in range(img_h):
+                    for w in range(img_w):
+                        deta_norma_x [b,c,h,w]=residual[b,c,h,w]*self.gamma[c]
+         deta_var = np.zeros()
+        
