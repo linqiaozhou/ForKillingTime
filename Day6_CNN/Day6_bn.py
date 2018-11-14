@@ -1,4 +1,5 @@
 #coding=uft-8
+import numpy as np
 class BatchNormal(object):
-  def __inint__(self):
-    
+    def __init__(self):
+        self.norm =     
