@@ -1,4 +1,4 @@
-#coding=uft-8
+#coding=utf-8
 import numpy as np
 
 class BatchNormal(object):
@@ -15,56 +15,35 @@ class BatchNormal(object):
     def forward(self,input_data):
         batch_size,channel,img_h,img_w=input_data.shape
         output_data = np.zeros_like(input_data,dtype=float32)
-        for b in range(batch_size):
-            for c in range(channel):
-                for h in range(img_h):
-                    for w in range(img_w):
-                        self.mean[c] += input_data[b,c,h,w]
+        for c in range(channel):
+            self.mean[c] =np.sum(input_data[:,c,:,:]
         self.mean/=(batch_size*channel*img_h*img_w)
-        for b in range(batch_size):
-            for c in range(channel):
-                for h in range(img_h):
-                    for w in range(img_w):
-                        self.variance[c] += (input_data[b,c,h,w]-self.mean[c])**2
+        for c in range(channel):
+             self.variance[c] =np.sum((input_data[:,c,:,:]-self.mean[c])**2)
         self.variance /= (batch_size*channel*img_h*img_w)
-        for b in range(batch_size):
-            for c in range(channel):
-                for h in range(img_h):
-                    for w in range(img_w):
-                        self.norm[b,c,h,w]= (input_data[b,c,h,w]-self.mean[c])/(self.variance[c]+0.0000001)
-                        output_data[b,c,h,w]= self.norm[b,c,h,w]*self.gamma[c]+self.beta[c]
+        for c in range(channel):
+            self.norm[:,c,:,:]= (input_data[:,c,:,:]-self.mean[c])/(self.variance[c]+0.0000001)
+            output_data[:,c,:,:]= self.norm[:,c,:,:]*self.gamma[c]+self.beta[c]
         return output_data
         
     def backward(self,input_data,residual):
         batch_size,channel,img_h,img_w=residual.shape
-        for b in range(batch_size):
-            for c in range(channel):
-                for h in range(img_h):
-                    for w in range(img_w):
-                        self.deta_gamma[c] += residual[b,c,h,w]*self.norm[b,c,h,w]
-                        self.deta_beta[c] += residual[b,c,h,w]
+        for c in range(channel):
+            self.deta_gamma[c] =np.sum(residual[:,c,:,:]*self.norm[:,c,:,:])
+            self.deta_beta[c] = np.sum(residual[:,c,:,:])
         deta_norma_x = np.zeros_like(residual,dtype=float32)
-        for b in range(batch_size):
-            for c in range(channel):
-                for h in range(img_h):
-                    for w in range(img_w):
-                        deta_norma_x [b,c,h,w]=residual[b,c,h,w]*self.gamma[c]
-         deta_var = np.zeros(channel,dtype=float32)
-         deta_mean = np.zeros(channel,dtype=float32)
-         for b in range(batch_size):
-            for c in range(channel):
-                for h in range(img_h):
-                    for w in range(img_w):
-                        deta_var[c]+=deta_norma_x[b,c,h,w]*(input_data[b,c,h,w]-self.mean[c])
-                        deta_mean[c] +=  deta_norma_x[b,c,h,w]   
-         deta_var *= -0.5*(self.variance+0.000001)**(-1.5)                        
-         deta_mean *= -1*(self.variance+0.000001)**(-0.5)
-         deta_x = np.zeros_like(residual,dtype=float)
-         for b in range(batch_size):
-            for c in range(channel):
-                for h in range(img_h):
-                    for w in range(img_w):
-                        deta_x[b,c,h,w] = deta_norma_x[b,c,h,w]*(self.variance+0.000001)**(-0.5) \
-                        +2*self.variance[c]*(input_data[b,c,h,w]-self.mean[c])/(batch_size*channel*img_h*img_w)\
-                        +deta_mean[c]/(batch_size*channel*img_h*img_w)
-         return deta_x
+        for c in range(channel):
+            deta_norma_x[:,c,:,:]=residual[:,c,:,:]*self.gamma[c]
+        deta_var = np.zeros(channel,dtype=float32)
+        deta_mean = np.zeros(channel,dtype=float32)
+        for c in range(channel):
+            deta_var[c]=np.sum(deta_norma_x[:,c,:,:]*(input_data[:,c,:,:]-self.mean[c]))
+            deta_mean[c] = np.sum(deta_norma_x[:,c,:,:])
+        deta_var *= -0.5*(self.variance+0.000001)**(-1.5)                        
+        deta_mean *= -1*(self.variance+0.000001)**(-0.5)
+        deta_x = np.zeros_like(residual,dtype=float)
+        for c in range(channel):
+            deta_x[:,c,:,:] = deta_norma_x[:,c,:,:]*(self.variance[c]+0.000001)**(-0.5) \
+                              +2*self.variance[c]*(input_data[:,c,:,:]-self.mean[c])/(batch_size*channel*img_h*img_w)\
+                              +deta_mean[c]/(batch_size*channel*img_h*img_w)
+        return deta_x
