@@ -50,16 +50,12 @@ class BatchNormal(object):
                     for w in range(img_w):
                         deta_norma_x [b,c,h,w]=residual[b,c,h,w]*self.gamma[c]
          deta_var = np.zeros(channel,dtype=float32)
+         deta_mean = np.zeros(channel,dtype=float32)
          for b in range(batch_size):
             for c in range(channel):
                 for h in range(img_h):
                     for w in range(img_w):
                         deta_var[c]+=deta_norma_x[b,c,h,w]*(input_data[b,c,h,w]-self.mean[c])
-         deta_var *= -0.5*(self.variance+0.000001)**(-0.15)
-         deta_mean = np.zeros(channel,dtype=float32)
-         for b in range(batch_size):
-            for c in range(channel):
-                for h in range(img_h):
-                    for w in range(img_w):              
                         deta_mean[c] +=  deta_norma_x[b,c,h,w]   
-        deta_mean *= -1*(self.variance+0.000001)**(-0.5)
+         deta_var *= -0.5*(self.variance+0.000001)**(-1.5)                        
+         deta_mean *= -1*(self.variance+0.000001)**(-0.5)
