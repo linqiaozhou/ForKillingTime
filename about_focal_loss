@@ -1,0 +1,22 @@
+作者：ChenJoya
+链接：https://www.zhihu.com/question/293369755/answer/488355189
+来源：知乎
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+我觉着吧 ... 作者可能没用对地方 ...Focal Loss 对 YOLO V3 是有效果的。
+在 PASCAL VOC 上 mAP 可以加一个点左右，很明显了。我们来梳理一下 YOLO V3 的检测过程，
+看看哪个地方适用于 Focal Loss：
+（1）对于所有 predict boxes，若其与所有的真实方框 IoU 小于 ignore_thresh，惩罚objectness，如果大于，不进行惩罚
+（2）对于所有 true boxes，判断它的尺寸如何，该丢给哪一层检测（FPN 中的哪一层）
+（3）得出了该哪一层检测后，找 true boxes 的中心点，并且找和它靠近的 predict boxes，指定它去学习 true box 
+（4）location，objectness，classification 项的调整分析一下，什么地方有巨大的类别不均衡存在？只有一个地方，就是（1）阶段。
+我在实验中发现的情况是，待网络训练稳定后，一个 batch 中惩罚数和不惩罚数目的比例接近达到了300 : 1。
+这也是正常的，因为如果按照416的尺寸输入，yolov3 的 anchor 总数达到 （13*13 + 26*26 + 52*52）*3 = 10647 ， 
+大部分和 true box 的 IoU 怎么会大于 ignore_thresh（0.5 for VOC 0.7 for MS COCO）嘛 ... So ...
+具体修改的话，objectness就看作  好了。
+focal loss 中的两个超参数 α 和 γ 的话，γ 不用变，α 自个去调 - -详细一点，
+原损失为：L noobj = - log(1-p)加上
+Focal Loss： γ = 2，
+求导： 按照这个去修改 yolo_layer.c 。
+输出的 l.output[obj_index] 即为。
+评论区敞开，欢迎交流：）
