@@ -60,7 +60,3 @@ class ConvLayer(object):
         bottom_diff = conv2d(padding(top_diff),rotate(self.kernel)) #forward padding exit
         return bottom_diff
         
-        
-          
-        
-      
