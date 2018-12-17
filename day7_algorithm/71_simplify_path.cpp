@@ -7,7 +7,10 @@ path = "/a/./b/../../c/", => "/c"
 path = "/a/../../b/../c//.//", => "/c"
 path = "/a//b////c/d//././/..", => "/a/b/c"
 
-In a UNIX-style file system, a period ('.') refers to the current directory, so it can be ignored in a simplified path. Additionally, a double period ("..") moves up a directory, so it cancels out whatever the last directory was. For more information, look here: https://en.wikipedia.org/wiki/Path_(computing)#Unix_style
+In a UNIX-style file system, a period ('.') refers to the current directory, 
+so it can be ignored in a simplified path. Additionally, a double period ("..") moves up a directory, 
+so it cancels out whatever the last directory was. For more information, 
+look here: https://en.wikipedia.org/wiki/Path_(computing)#Unix_style
 
 Corner Cases:
 
@@ -16,3 +19,10 @@ In this case, you should return "/".
 Another corner case is the path might contain multiple slashes '/' together, such as "/home//foo/".
 In this case, you should ignore redundant slashes and return "/home/foo".
 */
+
+class Solution {
+public:
+    string simplifyPath(string path) {
+        
+    }
+};
