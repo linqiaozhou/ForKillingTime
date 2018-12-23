@@ -38,13 +38,14 @@ public:
                  ++i;
              }
              if(sub_name==""|| sub_name==".") continue;
-             if(sub_name==".."&& !stk.empty()) 
+             if(sub_name!="..") 
              {   
                  stk.pop();
-             }
-             else
-             {
                  stk.push(sub_name);
+             }
+             else if(!stk.empty())
+             {
+                 stk.pop();
              }
          }
          string ret;
