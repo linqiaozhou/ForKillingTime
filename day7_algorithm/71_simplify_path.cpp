@@ -40,7 +40,6 @@ public:
              if(sub_name==""|| sub_name==".") continue;
              if(sub_name!="..") 
              {   
-                 stk.pop();
                  stk.push(sub_name);
              }
              else if(!stk.empty())
