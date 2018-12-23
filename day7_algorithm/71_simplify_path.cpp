@@ -22,42 +22,42 @@ In this case, you should ignore redundant slashes and return "/home/foo".
 
 #include<string>
 #include<vector>
+#include<stack>
 using namespace std;
 class Solution {
 public:
     string simplifyPath(string path) {
-         vector<string> stk;
-         int last_pos = 0;
-         int pos = 0;
-         int len=length(path);
-         while(-1!=(pos=temp_path.find("/"))
+         stack<string> stk;
+         int len=path.size();
+         for(int i = 0; i < len; ++i)
          {
-             len = length(temp_path);
-             if(pos<len-1)
+             string sub_name;
+             while(path[i]!='/' && i < len)
              {
-                 if(path[pos+1]==".")
-                 {
-                     if(pos<len-2 && path[pos+2]==".")
-                     {
-                         if(!stk.empty())
-                         {
-                             stk.pop_back();
-                         }
-                     }
-                 }
+                 sub_name += path[i];
+                 ++i;
+             }
+             if(sub_name==""|| sub_name==".") continue;
+             if(sub_name==".."&& !stk.empty()) 
+             {   
+                 stk.pop();
              }
              else
              {
-                string  sub_path = string(path,last_pos+1,pos);
-                stk.push_back(sub_path);
+                 stk.push(sub_name);
              }
-             last_pos=pos;
-             temp_path.replace(pos,1,"#");
          }
-         if(last_pos<len-1)
+         string ret;
+         if(stk.empty())
          {
-             string sub_path = string(temp_path,last_pos);
-             stk.push_back(sub_path);
+             ret +="/";
+             return ret;
          }
-    }
+         while(!stk.empty())
+         {
+             ret = "/" + stk.top() + ret;
+             stk.pop();
+         }
+         return ret;
+ }
 };
