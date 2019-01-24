@@ -12,39 +12,42 @@ Both dividend and divisor will be 32-bit signed integers.
 The divisor will never be 0.
 Assume we are dealing with an environment which could only store integers within the 32-bit signed integer range: [âˆ’231,  231 âˆ’ 1]. 
 For the purpose of this problem, assume that your function returns 231 âˆ’ 1 when the division result overflows.*/
-class Solution{
+#include"common.hpp"
+class Solution {
 public:
-    int divide(int dividend, int divisor){
-        if (dividend == INT_MIN && divisor == 0)
+    int divide(int dividend, int divisor) {
+        
+         if (dividend == INT_MIN && divisor == -1)
             return INT_MAX;
-        if (dividend < divisor)
+         if (dividend == 0 || divisor == 0)
             return 0;
-        int flag = 1;
-        if ((dividend < 0 && divisor) >0
-            || dividend > 0 && divisor < 0)
-            flag = -1;
-        long long new_divisor = divisor;
-        long long new_dividend = dividend;
-        new_divisor = abs(new_divisor);
-        new_dividend = abs(new_dividend);
-        int cnt = 1;
-        int ret = 0;
-        while(new_dividend > 2*new_divisor )
+
+        int nega = 0;
+        if ((dividend>0&&divisor<0) || (dividend<0&&divisor>0))
+            nega = 1;
+        long long d=dividend;//intÊý¾Ýabs(-2147483648)»áÒç³ö£¬ÒòÎªÕýÊýintÖ»ÄÜµ½2147483647,ËùÒÔÐèÒªlong long À´´æ´¢Ò»ÏÂ
+        long long s=divisor;
+        long long den = abs(d);
+        long long sor = abs(s);
+        if (sor > den)
+            return 0;
+        long long sum = 0;
+        int count = 0;
+        int res = 0;
+        while (den >= sor)
         {
-            new_divisor<<1;
-            cnt<<1;
-        }
-        while(new_dividend >= divisor)
-        {
-            new_dividend -= new_divisor;
-            ret += cnt;
-            if (new_divisor!=divisor)
-            {
-                new_divisor>>1;
-                cnt>>1;
+            count = 1;                //a >= b±£Ö¤ÁË×îÉÙÓÐÒ»¸öcount
+            sum = sor;
+            while (sum + sum <= den){    //!!
+                sum += sum;
+                count += count;
             }
+            den -= sum;
+            res += count;
         }
-        ret *= flag;
-        return ret;
+
+        if (nega)
+            res = 0 - res;
+        return res;
     }
-}
+};
